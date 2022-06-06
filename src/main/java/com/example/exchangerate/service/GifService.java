@@ -12,7 +12,7 @@ import java.net.URISyntaxException;
 @Service
 public class GifService {
 
-    private GifClient gifClient;
+    private final GifClient gifClient;
     @Value("${giphy.api.key}")
     private String apiKey;
 
