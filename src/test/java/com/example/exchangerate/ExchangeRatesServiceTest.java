@@ -25,7 +25,7 @@ public class ExchangeRatesServiceTest {
     private ExchangeRatesService exchangeRatesService;
 
     @Test
-    void currencyCodesIsNull() {
+    public void currencyCodesIsNull() {
         ExchangeRates getCurrentRatesResponse = new ExchangeRates();
         when(exchangeRatesClient.getCurrentRates(any())).thenReturn(getCurrentRatesResponse);
         var result = assertDoesNotThrow(exchangeRatesService::getCurrencyCodes);
@@ -40,22 +40,53 @@ public class ExchangeRatesServiceTest {
         Map<String, Double> currentRates = Map.of("RUB", 1.3, "BTC", 120.6, "USD", 2.0);
         ExchangeRates getCurrentRatesResponse = new ExchangeRates(timestamp, base, currentRates);
         when(exchangeRatesClient.getCurrentRates(any())).thenReturn(getCurrentRatesResponse);
-
         var result = assertDoesNotThrow(exchangeRatesService::getCurrencyCodes);
 
         assertEquals(currentRates.keySet(), result);
     }
 
     @Test
-    public void gifTag() {
-        Integer timestamp = 1654448428;
-        String base = "USD";
-        Map<String, Double> currentRates = Map.of("RUB", 1.3, "BTC", 120.6, "USD", 2.0);
-        ExchangeRates exchangeRatesResponse = new ExchangeRates(timestamp, base, currentRates);
-        when(exchangeRatesClient.getCurrentRates(any())).thenReturn(exchangeRatesResponse);
-        when(exchangeRatesResponse.getRates()).thenReturn(currentRates);
-        var value = assertDoesNotThrow( ()-> exchangeRatesService.getGifTag(base));
-        assertEquals(currentRates.keySet().toArray()[0], value);
+    public void richGifTag() {
+        String code = "RUB";
+        String rich = "rich";
+        when(exchangeRatesClient.getCurrentRates(any())).thenReturn(currentExchangeRates());
+        when(exchangeRatesClient.getOldRates(any(), any())).thenReturn(oldExchangeRates());
+        var value = assertDoesNotThrow(() -> exchangeRatesService.getGifTag(code));
+        assertEquals(rich, value);
+    }
+
+    @Test
+    public void richGifTagWithEqual() {
+        String code = "KPW";
+        String rich = "rich";
+        when(exchangeRatesClient.getCurrentRates(any())).thenReturn(currentExchangeRates());
+        when(exchangeRatesClient.getOldRates(any(), any())).thenReturn(oldExchangeRates());
+        var value = assertDoesNotThrow(() -> exchangeRatesService.getGifTag(code));
+        assertEquals(rich, value);
+    }
+
+    @Test
+    public void brokeGifTag() {
+        String code = "EUR";
+        String rich = "broke";
+        when(exchangeRatesClient.getCurrentRates(any())).thenReturn(currentExchangeRates());
+        when(exchangeRatesClient.getOldRates(any(), any())).thenReturn(oldExchangeRates());
+        var value = assertDoesNotThrow(() -> exchangeRatesService.getGifTag(code));
+        assertEquals(rich, value);
+    }
+
+    private ExchangeRates oldExchangeRates() {
+        var timestamp = 1654448428;
+        var base = "USD";
+        Map<String, Double> oldRates = Map.of("RUB", 1.3, "EUR", 0.9, "KPW", 900.0);
+        return new ExchangeRates(timestamp, base, oldRates);
+    }
+
+    private ExchangeRates currentExchangeRates() {
+        var timestamp = 1654448428;
+        var base = "USD";
+        Map<String, Double> currentRates = Map.of("RUB", 1.5, "EUR", 0.89, "KPW", 900.0);
+        return new ExchangeRates(timestamp, base, currentRates);
     }
 
 

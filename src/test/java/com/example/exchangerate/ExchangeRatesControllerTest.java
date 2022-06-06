@@ -50,12 +50,32 @@ public class ExchangeRatesControllerTest {
                 .andExpect(content().contentType(MediaType.IMAGE_GIF))
                 .andExpect(content().bytes(getGifResponse));
     }
+    @Test
+    public void brokeGif() throws Exception {
+        Gif getRandomGifResponse = new TestGif();
+        var getGifResponse = new byte[]{0x12, 0x22, 0x40};
+        when(gifClient.getRandomGif(any(), any()))
+                .thenReturn(getRandomGifResponse);
+        when(gifClient.getGif(any()))
+                .thenReturn(getGifResponse);
+        when(exchangeRatesClient.getOldRates(any(), any()))
+                .thenReturn(oldExchangeRates());
+        when(exchangeRatesClient.getCurrentRates(any()))
+                .thenReturn(currentExchangeRates());
+
+        mockMvc.perform(get("/gifs/BTC")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.IMAGE_GIF))
+                .andExpect(content().bytes(getGifResponse));
+    }
+
+
 
     private ExchangeRates oldExchangeRates() {
         var timestamp = 1654448428;
         var base = "USD";
-        Map<String, Double> currentRates = Map.of("RUB", 1.3, "BTC", 120.6, "KPW", 900.0);
-        return new ExchangeRates(timestamp, base, currentRates);
+        Map<String, Double> oldRates = Map.of("RUB", 1.3, "BTC", 120.6, "KPW", 900.0);
+        return new ExchangeRates(timestamp, base, oldRates);
     }
 
     private ExchangeRates currentExchangeRates() {
