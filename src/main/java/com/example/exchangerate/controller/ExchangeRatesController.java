@@ -17,8 +17,8 @@ import java.util.Collection;
 @RequestMapping("/")
 public class ExchangeRatesController {
 
-    private GifService gifService;
-    private ExchangeRatesService exchangeRatesService;
+    private final GifService gifService;
+    private final ExchangeRatesService exchangeRatesService;
     @Value("${giphy.rich}")
     private String richGif;
     @Value("${giphy.broke}")
@@ -32,6 +32,7 @@ public class ExchangeRatesController {
 
     @GetMapping("/codes")
     public Collection<String> getCodes() {
+
         return exchangeRatesService.getCurrencyCodes();
     }
 
