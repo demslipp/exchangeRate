@@ -86,7 +86,7 @@ public class ExchangeRatesControllerTest {
     }
 
 
-    class TestGif extends Gif {
+    static class TestGif extends Gif {
 
         @Override
         public String getUrl() {
