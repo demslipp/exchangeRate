@@ -12,7 +12,7 @@
 
   <p> 1. Склонировать репозиторий </p>
   <p> 2. Выполнить команды </p>
-	<p><code>docker pull exchange-rate</code></p>
+	<p><code>dmslp/docker pull exchange-rate</code></p>
 	<p><code>docker run exchange-rate</code></p>
 	<p>3. Запустить приложение </p>
 	
